@@ -4,9 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "ts-node src/index.ts",
-    "payfees": "ts-node src/indexPayFees.ts",
-    "sweeper": "ts-node src/sweeper.ts"
+    "start": "ts-node src/index.ts"
   },
   "author": "",
   "license": "MIT",
