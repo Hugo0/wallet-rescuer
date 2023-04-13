@@ -10,6 +10,7 @@
   "license": "MIT",
   "dependencies": {
     "@flashbots/ethers-provider-bundle": "^0.4.2",
+    "dotenv": "^16.0.3",
     "ethers": "^5.4.7",
     "web3-utils": "^1.7.0"
   },

@@ -4,18 +4,22 @@ import { providers, Wallet, BigNumber } from 'ethers';
 import { FlashbotsBundleProvider, FlashbotsBundleResolution } from '@flashbots/ethers-provider-bundle';
 import { fromWei } from 'web3-utils';
 
+// load env variables from .env file
+import * as dotenv from 'dotenv';
+dotenv.config();
+
 // constants
 const GWEI = BigNumber.from(10).pow(9);
 const PRIORITY_FEE = GWEI.mul(3); // priority fee is 3 GWEI you can find current values of priority fee and base fee at https://etherscan.io/gastracker
 const BLOCKS_IN_THE_FUTURE = 1;
 
-// goerli
-const FLASHBOTS_ENDPOINT = 'https://relay-goerli.flashbots.net';
-const CHAIN_ID = 5;
+// // goerli
+// const FLASHBOTS_ENDPOINT = 'https://relay-goerli.flashbots.net';
+// const CHAIN_ID = 5;
 
 // mainnet -  uncomment to run on ETH  mainnet
-//const FLASHBOTS_ENDPOINT = 'https://relay.flashbots.net';
-//const CHAIN_ID = 1;
+const FLASHBOTS_ENDPOINT = 'https://relay.flashbots.net';
+const CHAIN_ID = 1;
 
 // utils
 const convertWeiToEth = (wei: BigNumber): string => {
@@ -80,8 +84,9 @@ const getBundle = (maxBaseFeeInNextBlock: BigNumber) => {
   const maxFeePerGas: BigNumber = PRIORITY_FEE.add(maxBaseFeeInNextBlock);
 
   // You have to adjust total gas needed for all transactions from compromised wallet
-  const totalGasNeeded: BigNumber = BigNumber.from(65036);
-  const fundAmount: BigNumber = maxFeePerGas.mul(totalGasNeeded);
+  const totalGasNeeded: BigNumber = BigNumber.from(297000);
+  const minerBribe: BigNumber = GWEI.mul(10000); 
+  const fundAmount: BigNumber = maxFeePerGas.mul(totalGasNeeded).add(minerBribe);
   // fundAmount = fundAmount.sub(GWEI.mul(896478)); - if u have some leftovers in compromised wallet you can adjust funding amount by substracting leftover
   console.log(`Priority fee:\t\t${PRIORITY_FEE} WEI, ${convertWeiToGwei(PRIORITY_FEE)} GWEI
 Base fee:\t\t${maxBaseFeeInNextBlock} WEI, ${convertWeiToGwei(maxBaseFeeInNextBlock)} GWEI
@@ -89,7 +94,7 @@ Max fee per gas:\t${maxFeePerGas} WEI, ${convertWeiToGwei(maxFeePerGas)} GWEI
 Fund amount:\t\t${fundAmount} WEI, ${convertWeiToGwei(fundAmount)} GWEI, ${convertWeiToEth(fundAmount)} ETH`);
 
   const bundle = [
-    // Example transaction that i have used to rescue NFT on goerli network
+    // Example transaction that i have used to rescue ENS names on mainnet
     // Send funds for gas to compromised wallet from funding wallet
     // Take care when computing how much to send - eth scavenger will eat any leftovers
     {
@@ -110,15 +115,50 @@ Fund amount:\t\t${fundAmount} WEI, ${convertWeiToGwei(fundAmount)} GWEI, ${conve
     //   3. Connect metamask wallet
     //   4. Fill data for transferFrom method
     //   5. Copy hex transacton data from Metamask into data field below
+
+    // transfer hugo0.eth
     {
       transaction: tx({
-        to: '0xf5de760f2e916647fd766b4ad9e85ff943ce3a2b',
+        to: '0x57f1887a8bf19b14fc0df6fd9b2acc9af147ea85',
         maxFeePerGas,
-        gasLimit: 65036,
-        data: '0x42842e0e000000000000000000000000beeadaeb8466b66cd1772747b695014f6540e3320000000000000000000000008cec4e83e0382cc99021b4f51a097d2dbaf705c50000000000000000000000000000000000000000000000000000000000035d65',
+        gasLimit: 98944,
+        data: '0x42842e0e000000000000000000000000d3222f01b4154528cec2807d99385d0fa4473a31000000000000000000000000ecd6511e257e77a4d03f86dc3c76eb8150116c3eeef1cc67e7116f8a42178fbe98801043e71b215a6e1c7247523d813d3bc2aa1f'
       }),
-      signer: compromisedWallet,
-    }
+      signer: compromisedWallet
+    },
+  
+    // transfer peanutprotocol.eth
+    {
+      transaction: tx({
+        to: '0x57f1887a8BF19b14fC0dF6Fd9B2acc9Af147eA85',
+        maxFeePerGas,
+        gasLimit: 98944,
+        data: '0x42842e0e000000000000000000000000d3222f01b4154528cec2807d99385d0fa4473a31000000000000000000000000ecd6511e257e77a4d03f86dc3c76eb8150116c3e034d3ee55ea8a643d81ceebd9a7719a705f23389aff763d22183b3ed7e728041'
+      }),
+      signer: compromisedWallet
+    },
+  
+  
+    // transfer ppeanut.eth
+    {
+      transaction: tx({
+        to: '0x57f1887a8BF19b14fC0dF6Fd9B2acc9Af147eA85',
+        maxFeePerGas,
+        gasLimit: 98944,
+        data: '0x42842e0e000000000000000000000000d3222f01b4154528cec2807d99385d0fa4473a31000000000000000000000000ecd6511e257e77a4d03f86dc3c76eb8150116c3efcdd231d16bef403e8401730480662ef1895a3d37f97144389ee9333ff36803d'
+      }),
+      signer: compromisedWallet
+    },
+
+    // miner bribe
+    {
+      transaction: tx({
+        to: '0x8512a66D249E3B51000b772047C8545Ad010f27c',
+        maxFeePerGas,
+        value: minerBribe,
+      }),
+      signer: fundingWallet
+    },
   ];
   return bundle;
 };

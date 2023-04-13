@@ -1,14 +1,15 @@
 # Flashbot recovery example
 - **See my answer on StackExchange for some background** - https://ethereum.stackexchange.com/a/119360/91977
 - The problem: One of your wallets has been compromised, and any ETH you put on ther is siphoned off immediately. You would like to retrieve some assets or transfer contract ownership, but that all costs gas and your gas tank is stuck on empty.
-- The solution: Flashbots!
+- The solution: Flashbots
 - The code for this repo provides an example of how
-
 - This is the actual code I used (with added comments) to recover assets from a compromised wallet
+- Example: (this is my own wallet): https://etherscan.io/address/0xd3222f01b4154528ceC2807D99385d0fA4473A31
 - Most of this code was taken from the example provided by https://www.youtube.com/watch?v=1ve1YIpDs_I
 
 ## Setup
 - `npm install`
+- rename dummy.env to .env and fill in keys ( DO NOT SHARE AND DELETE AFTER USAGE )
 - Construct a list of transactions. You can get the gasLimit and tx data by doing a dry run with metamask and/or etherscan
 - Test out on goerli (youll have to request goerli ETH and testing NFT using faucet first. You can use paradigm multifaucet https://faucet.paradigm.xyz/)
 - Run on mainnet
